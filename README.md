@@ -1,4 +1,4 @@
-# sv_waveterm
+# Spend less time debugging with sv_waveterm - spend more time on fun work
 
 SV Waveterm shows you a short waveform directly in your log like this:
 
@@ -9,6 +9,8 @@ SV Waveterm shows you a short waveform directly in your log like this:
             +-----------+---+---+---+---+---+
     counter |0          |1  |2  |3  |4  |5  |
             +-----------+---+---+---+---+---+
+
+This waveform is a fast way to get more context on a failure than from an error message alone. Seeing the waveform directly in your log may save you a debug session with your waveform viewer, so that you can go back to the fun work faster.
 
 You display the waveform by defining what signals you want to track with macros:
 
@@ -31,6 +33,37 @@ This could for example be an assertion:
     ) else $error("Counter is 5\n%s", counter_waves.sprint());
 
 See a full example under [examples/basic](./examples/basic/tb.sv)
+
+# Save time with sv_waveterm
+
+Here is how sv_waveterm saves time from the authors own experience: Nightly regression failed for some tests. Investigation starts:
+
+## Without sv_waveterm
+
+| Action | time |
+| ------ | ---- |
+| search log for error message | 25 seconds |
+| realize that there is too little information to triage issue | (not timed) |
+| git fetch, checkout, etc. | 1 minute 5 seconds | 
+| compile, elab and wait until waveform viewer is ready | 4 minutes and 20 seconds | 
+| add waves, start sim and zoom in on the error |  1 minute and 12 seconds | 
+| triage issue | (not timed) | 
+| Total | 7 minutes 2 seconds |
+
+## With sv_waveterm
+
+| Action | time |
+| ------ | ---- |
+| search log for error message | 25 seconds |
+| triage issue | (not timed) |
+| git fetch, checkout, etc. | 1 minute 5 seconds |
+| Total | 1 minute 30 seconds |
+
+## Conclusion
+
+sv_waveterm saved 5 minutes of debugging time compared to the traditional workflow, by saving a compile, elaboration and simulation run with the waveform viewer open. This is just a single data-point, but it gives you an indication on what to expect for your own environment.
+
+As the car ads say: Your mileage may vary.
 
 # Install
 
