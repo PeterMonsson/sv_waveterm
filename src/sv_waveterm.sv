@@ -84,7 +84,7 @@ class sv_waveterm_element;
       for (int i = min_counter; i < counter; i++) begin
          if (i != min_counter) begin
             if (values[(i-1)%size] === values[i%size]) begin
-               if (values[i%size] === val) begin
+               if (values[i%size] === {64{val}}) begin
                   sprint = {sprint, "-"};
                end else begin
                   sprint = {sprint, " "};
@@ -93,13 +93,13 @@ class sv_waveterm_element;
                sprint = {sprint, "+"};
             end
          end
-         if (values[i%size] === val) begin
+         if (values[i%size] === {64{val}}) begin
             sprint = {sprint, section};
          end else begin
             sprint = {sprint, empty_section};
          end
       end
-      if (values[(counter-1)%size] === val) begin
+      if (values[(counter-1)%size] === {64{val}}) begin
          sprint = {sprint, "-"};
       end else begin
          sprint = {sprint, " "};
@@ -293,6 +293,7 @@ endclass
     fork begin \
       forever begin \
         @(posedge ___waveterm_clk) \
+        /* verilator lint_off WIDTHEXPAND */ \
         _waves.record(`"id`", id); \
       end \
     end join_none \
