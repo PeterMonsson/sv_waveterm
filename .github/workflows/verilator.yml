@@ -1,0 +1,20 @@
+name: Verilator Testbench
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: justinjones/verilator:latest
+      options: --user root
+    steps:
+      - uses: actions/checkout@v2
+      - name: Compile Verilog code
+        run: verilator -Wall -cc src/sv_waveterm.sv examples/basic/tb.v --binary
+      - name: Run testbench
+        run: obj_dir/Vtb
