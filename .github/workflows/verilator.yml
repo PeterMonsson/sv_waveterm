@@ -15,6 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Compile Verilog code
-        run: verilator -Wall -cc src/sv_waveterm.sv examples/basic/tb.sv --binary
+        run: verilator -Wall -cc -Isrc examples/basic/tb.sv --binary
       - name: Run testbench
         run: obj_dir/Vtb
