@@ -83,8 +83,8 @@ class sv_waveterm_element;
       sprint = {name, " "}; //TODO: or - or +? I don't know
       for (int i = min_counter; i < counter; i++) begin
          if (i != min_counter) begin
-            if (values[(i-1)%size][0] === values[i%size]) begin
-               if (values[i%size] === val) begin
+            if (values[(i-1)%size] === values[i%size]) begin
+               if (values[i%size][0] === val) begin
                   sprint = {sprint, "-"};
                end else begin
                   sprint = {sprint, " "};
@@ -293,7 +293,7 @@ endclass
     fork begin \
       forever begin \
         @(posedge ___waveterm_clk) \
-        _waves.record(`"id`", id); \
+        _waves.record(`"id`", 64'(id)); \
       end \
     end join_none \
   end
