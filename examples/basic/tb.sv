@@ -8,7 +8,13 @@ module tb;
   logic clk = 0;
   always #5 clk <= !clk;
   logic reset_b = '0;
-  initial #17 reset_b = '1;
+  initial begin
+   #17; 
+   reset_b = '1;
+   #1000;
+   $finish;
+  end
+
   logic [3:0] counter;
 
   always @(posedge clk or negedge reset_b) begin
