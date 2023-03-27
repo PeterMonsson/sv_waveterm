@@ -83,7 +83,7 @@ class sv_waveterm_element;
       sprint = {name, " "}; //TODO: or - or +? I don't know
       for (int i = min_counter; i < counter; i++) begin
          if (i != min_counter) begin
-            if (values[(i-1)%size] === values[i%size]) begin
+            if (values[(i-1)%size][0] === values[i%size]) begin
                if (values[i%size] === val) begin
                   sprint = {sprint, "-"};
                end else begin
@@ -93,13 +93,13 @@ class sv_waveterm_element;
                sprint = {sprint, "+"};
             end
          end
-         if (values[i%size] === val) begin
+         if (values[i%size][0] === val) begin
             sprint = {sprint, section};
          end else begin
             sprint = {sprint, empty_section};
          end
       end
-      if (values[(counter-1)%size] === val) begin
+      if (values[(counter-1)%size][0] === val) begin
          sprint = {sprint, "-"};
       end else begin
          sprint = {sprint, " "};
