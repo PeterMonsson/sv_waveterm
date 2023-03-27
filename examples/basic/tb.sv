@@ -6,7 +6,7 @@ module tb;
   `include "sv_waveterm.sv"  
   
   logic clk = 0;
-  always #5 clk = !clk;
+  always #5 clk <= !clk;
   logic reset_b = '0;
   initial #17 reset_b = '1;
   logic [3:0] counter;
