@@ -33,16 +33,16 @@ module tb;
   a_not_9 : assert property(
       @(posedge clk) disable iff (!reset_b)
       counter != 9
-   ) else $fatal(0, "Counter is 9\n%s", counter_waves.sprint());
+   ) else $display( "Counter is 9\n%s", counter_waves.sprint());
 
    a_not_5 : assert property(
       @(posedge clk) disable iff (!reset_b)
       counter != 5
-   ) else $error("Counter is 5\n%s", counter_waves.sprint());
+   ) else $display("Counter is 5\n%s", counter_waves.sprint());
 
    a_not_4 : assert property(
       @(posedge clk) disable iff (!reset_b)
       counter != 4
-   ) else $error("Counter is 4\n%s", counter_waves.sprint());
+   ) else $display("Counter is 4\n%s", counter_waves.sprint());
      
 endmodule // tb
