@@ -14,6 +14,14 @@ jobs:
       options: --user root
     steps:
       - uses: actions/checkout@v2
+      - name: Clone SVUnit
+        uses: actions/checkout@v2
+        with:
+          repository: svunit/svunit
+          ref: master
+          path: svunit
+      - name: LS
+        run: ls -al svunit
       - name: Compile Verilog code
         run: verilator -cc -Isrc examples/basic/tb.sv --assert --binary
       - name: Run testbench
