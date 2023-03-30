@@ -21,7 +21,7 @@ module sv_waveterm_element_unit_test;
   function void build();
     svunit_ut = new(name);
 
-    my_sv_waveterm_element = new(/* New arguments if needed */);
+    my_sv_waveterm_element = new("counter", 32);
   endfunction
 
 
@@ -87,7 +87,7 @@ module sv_waveterm_unit_test;
   function void build();
     svunit_ut = new(name);
 
-    my_sv_waveterm = new(/* New arguments if needed */);
+    my_sv_waveterm = new("clk");
   endfunction
 
 
