@@ -1,0 +1,26 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: justinjones/verilator:latest
+      options: --user root
+    steps:
+      - uses: actions/checkout@v2
+      - name: Clone SVUnit
+        uses: actions/checkout@v2
+        with:
+          repository: svunit/svunit
+          ref: master
+          path: svunit
+      - name: Compile Verilog code
+        run: verilator -cc -Isrc -f tests/.svunit.f --assert --binary
+      - name: Run testbench
+        run: obj_dir/Vtestrunner +verilator+error+limit+10
