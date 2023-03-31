@@ -78,16 +78,30 @@ module sv_waveterm_unit_test;
   // This is the UUT that we're 
   // running the Unit Tests on
   //===================================
-  sv_waveterm my_sv_waveterm;
+  logic clk = 0;
+  always #5 clk <= !clk;
+  logic reset_b;
+   
+  logic [3:0] counter;
 
+  always @(posedge clk or negedge reset_b) begin
+    if (!reset_b) begin
+      counter <= '0;
+    end else begin
+      counter <= counter + 1'b1;
+    end
+  end
+
+`sv_waveterm_begin(counter_waves, clk)
+  `sv_waveterm_int(reset_b)
+  `sv_waveterm_int(counter)
+`sv_waveterm_end
 
   //===================================
   // Build
   //===================================
   function void build();
     svunit_ut = new(name);
-
-    my_sv_waveterm = new("clk");
   endfunction
 
 
@@ -97,7 +111,9 @@ module sv_waveterm_unit_test;
   task setup();
     svunit_ut.setup();
     /* Place Setup Code Here */
-
+    reset_b = '0;
+    #17; 
+    reset_b = '1;
   endtask
 
 
@@ -126,7 +142,11 @@ module sv_waveterm_unit_test;
   //   `SVTEST_END
   //===================================
   `SVUNIT_TESTS_BEGIN
-
+    `SVTEST(display_4)
+      repeat (4) @(posedge clk);
+      $display(counter_waves.sprint());
+      `FAIL_IF(0)
+    `SVTEST_END
 
 
   `SVUNIT_TESTS_END
