@@ -143,9 +143,19 @@ module sv_waveterm_unit_test;
   //===================================
   `SVUNIT_TESTS_BEGIN
     `SVTEST(display_4)
+      string exp;
+      exp = {
+"        +-+ +-+ +-+ +-+ +-+ +-+ +", "\n",
+"clk     + +-+ +-+ +-+ +-+ +-+ +-+", "\n",
+"                +----------------", "\n",
+"reset_b  -------+                ", "\n",
+"        +-----------+---+---+---+", "\n",
+"counter |0          |1  |2  |3  |", "\n",
+"        +-----------+---+---+---+", "\n"
+};
       repeat (4) @(posedge clk);
       $display(counter_waves.sprint());
-      `FAIL_IF(0)
+      `FAIL_UNLESS_STR_EQUAL(counter_waves.sprint(), exp)
     `SVTEST_END
 
 
