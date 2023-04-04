@@ -23,4 +23,4 @@ jobs:
       - name: Compile Verilog code
         run: verilator -cc -Wno-WIDTHTRUNC -Isrc -f tests/.svunit.f --assert --binary
       - name: Run testbench
-        run: obj_dir/Vjunit_xml +verilator+error+limit+10
+        run: obj_dir/Vjunit_xml +verilator+error+limit+10 | tee run.log
