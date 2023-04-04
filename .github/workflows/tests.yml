@@ -17,8 +17,8 @@ jobs:
       - name: Clone SVUnit
         uses: actions/checkout@v2
         with:
-          repository: svenka3/svunit
-          ref: srini_verilator
+          repository: PeterMonsson/svunit
+          ref: minimal-verilator
           path: svunit
       - name: Compile Verilog code
         run: verilator -cc -Wno-WIDTHTRUNC -Isrc -f tests/.svunit.f --assert --binary
