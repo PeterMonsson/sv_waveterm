@@ -25,4 +25,4 @@ jobs:
       - name: Run testbench
         run: obj_dir/Vjunit_xml +verilator+error+limit+10 | tee run.log
       - name: Check log
-        run: ! grep "FAILED" run.log; return $?;
+        run: '! grep "FAILED" run.log; return $?;'
