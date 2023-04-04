@@ -24,3 +24,5 @@ jobs:
         run: verilator -cc -Wno-WIDTHTRUNC -Isrc -f tests/.svunit.f --assert --binary
       - name: Run testbench
         run: obj_dir/Vjunit_xml +verilator+error+limit+10 | tee run.log
+      - name: Check log
+        run: ! grep "FAILED" run.log; return $?;
