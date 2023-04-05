@@ -20,6 +20,8 @@ jobs:
           repository: PeterMonsson/svunit
           ref: minimal-verilator
           path: svunit
+      - name: Patch svunit_filter
+        run: cd svunit; git checkout master -- svunit_base/svunit_filter.svh 
       - name: Compile Verilog code
         run: verilator -cc -Wno-WIDTHTRUNC -Isrc -f tests/.svunit.f --assert --binary
       - name: Run testbench
