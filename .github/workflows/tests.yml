@@ -21,7 +21,7 @@ jobs:
           ref: minimal-verilator
           path: svunit
       - name: Compile Verilog code
-        run: verilator -cc -Wno-WIDTHTRUNC -Isrc -f tests/.svunit.f --assert --binary
+        run: verilator -cc -j 0 -Wno-WIDTHTRUNC -Isrc -f tests/.svunit.f --assert --binary
       - name: Run testbench
         run: obj_dir/Vjunit_xml +verilator+error+limit+10 +SVUNIT_FILTER='*' | tee run.log
       - name: Check log
