@@ -20,9 +20,7 @@ jobs:
           repository: PeterMonsson/svunit
           ref: minimal-verilator
           path: svunit
-      - name: Compile Verilog code
-        run: verilator -cc -Wno-WIDTHTRUNC -Isrc -f tests/.svunit.f --assert --binary
-      - name: Run testbench
-        run: obj_dir/Vjunit_xml +verilator+error+limit+10 +SVUNIT_FILTER='*' | tee run.log
+      - name: runSVUnit
+        run: (cd tests; SVUNIT_INSTALL=`pwd`/../svunit PATH=$PATH:$SVUNIT_INSTALL"/bin" runSVUnit -c_arg "-I../src" -c_arg "-Wno-WIDTHTRUNC" -c_arg "--assert"; obj_dir/Vtestrunner | tee obj_dir/run.log)
       - name: Check log
-        run: '! grep "FAILED" run.log; return $?;'
+        run: '! grep "FAILED" tests/obj_dir/run.log; return $?;'
