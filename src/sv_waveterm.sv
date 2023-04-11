@@ -14,6 +14,15 @@
 `ifndef __SV_WAVETERM__
 `define __SV_WAVETERM__
 
+package sv_waveterm_pkg;
+   function string get_padded_string(string s, int size);
+      get_padded_string = s;
+      for (int i = s.len(); i < size; i++) begin
+         get_padded_string = {get_padded_string, " "};
+      end
+   endfunction
+endpackage
+
 class sv_waveterm_element;
    string name;
    int    bits;
@@ -52,16 +61,9 @@ class sv_waveterm_element;
          section = {section, "-"};
          empty_section = {empty_section, " "};
       end
-      empty_name = "";
-      for (int i = 0; i < n_size+1; i++) begin
-         empty_name = {empty_name, " "};
-      end
 
-      padded_name = name;
-      for (int i = name.len(); i < n_size+1; i++) begin
-         padded_name = {padded_name, " "};
-      end
-
+      empty_name = sv_waveterm_pkg::get_padded_string("", n_size+1);
+      padded_name = sv_waveterm_pkg::get_padded_string(name, n_size+1);
       
       if (bits == 1) begin
          sprint = sprint_line(min_count, empty_name, 1'b1, section, empty_section);
@@ -238,12 +240,10 @@ class sv_waveterm;
       string empty_section2;
       string sprint;
       
-      //TODO: refactor to common helper methods
-      padded_name = clk_name;
-      for (int i = clk_name.len(); i < n_size+1; i++) begin
-         padded_name = {padded_name, " "};
-      end
+      empty_name = sv_waveterm_pkg::get_padded_string("", n_size+1);
+      padded_name = sv_waveterm_pkg::get_padded_string(clk_name, n_size+1);
 
+      //TODO: refactor to common helper methods
       section = "";
       empty_section = "";
       for (int i = 0; i < e_size/2; i++) begin
@@ -258,10 +258,6 @@ class sv_waveterm;
          empty_section2 = {empty_section2, " "};
       end
 
-      empty_name = "";
-      for (int i = 0; i < n_size+1; i++) begin
-         empty_name = {empty_name, " "};
-      end
 
       sprint = empty_name;
       for (int i = 0; i < size; i++) begin
