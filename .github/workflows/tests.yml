@@ -21,6 +21,6 @@ jobs:
           ref: minimal-verilator
           path: svunit
       - name: runSVUnit
-        run: (cd svunit; export SVUNIT_INSTALL=`pwd`; echo $SVUNIT_INSTALL"/bin" >> $GITHUB_PATH); (cd tests; runSVUnit -c_arg "-I../src" -c_arg "-Wno-WIDTHTRUNC" -c_arg "--assert"; obj_dir/Vtestrunner | tee obj_dir/run.log)
+        run: (cd tests; SVUNIT_INSTALL=`pwd`/../svunit PATH=$PATH:$SVUNIT_INSTALL"/bin" runSVUnit -c_arg "-I../src" -c_arg "-Wno-WIDTHTRUNC" -c_arg "--assert"; obj_dir/Vtestrunner | tee obj_dir/run.log)
       - name: Check log
         run: '! grep "FAILED" tests/obj_dir/run.log; return $?;'
