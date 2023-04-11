@@ -21,7 +21,7 @@ jobs:
           ref: minimal-verilator
           path: svunit
       - name: Setup SVUnit
-        run: (cd svunit/bin; source Setup.bsh)
+        run: (cd svunit; source Setup.bsh)
       - name: runSVUnit
         run: (cd tests; runSVUnit -c_arg "-I../src" -c_arg "-Wno-WIDTHTRUNC" -c_arg "--assert"; obj_dir/Vtestrunner | tee obj_dir/run.log)
       - name: Check log
