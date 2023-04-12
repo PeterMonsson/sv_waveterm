@@ -14,14 +14,14 @@
 `ifndef __SV_WAVETERM__
 `define __SV_WAVETERM__
 
-package sv_waveterm_pkg;
-   function string get_padded_string(string s, int size);
+class sv_waveterm_pkg;
+   stativ function string get_padded_string(string s, int size);
       get_padded_string = s;
       for (int i = s.len(); i < size; i++) begin
          get_padded_string = {get_padded_string, " "};
       end
    endfunction
-endpackage
+endclass
 
 class sv_waveterm_element;
    string name;
