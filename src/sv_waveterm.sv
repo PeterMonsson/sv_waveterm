@@ -14,11 +14,18 @@
 `ifndef __SV_WAVETERM__
 `define __SV_WAVETERM__
 
-class sv_waveterm_pkg;
+class sv_waveterm_helpers;
    static function string get_padded_string(string s, int size);
       get_padded_string = s;
       for (int i = s.len(); i < size; i++) begin
          get_padded_string = {get_padded_string, " "};
+      end
+   endfunction
+
+   static function string repeat_string(string s, int times);
+      repeat_string = "";
+      for (int i = 0; i < times; i++) begin
+         repeat_string = {repeat_string, s};
       end
    endfunction
 endclass
@@ -56,15 +63,11 @@ class sv_waveterm_element;
       string    padded_name;
       min_count = counter >= size ? counter - size : 0;
 
-      section = "";
-      empty_section = "";
-      for (int i = 0; i < e_size; i++) begin
-         section = {section, "-"};
-         empty_section = {empty_section, " "};
-      end
+      section = sv_waveterm_helpers::repeat_string("-", e_size);
+      empty_section = sv_waveterm_helpers::repeat_string(" ", e_size);
 
-      empty_name = sv_waveterm_pkg::get_padded_string("", n_size+1);
-      padded_name = sv_waveterm_pkg::get_padded_string(name, n_size+1);
+      empty_name = sv_waveterm_helpers::get_padded_string("", n_size+1);
+      padded_name = sv_waveterm_helpers::get_padded_string(name, n_size+1);
       
       if (bits == 1) begin
          sprint = sprint_line(min_count, empty_name, 1'b1, section, empty_section);
@@ -167,24 +170,16 @@ class sv_waveterm;
       elements = '{};
    endfunction
 
-   function void add(string name, int bits);
+   function sv_waveterm_element add(string name, int bits);
       sv_waveterm_element e;
       e = new(name, bits);
       elements.push_back(e);
+      return e;
    endfunction
 
    function void build();
       for (int i = 0; i < elements.size(); i++) begin
         elements[i].build(8); //TODO: stop hardcoding to 8
-      end
-   endfunction
-   
-   //TODO: accidentally quadratic
-   function void record(string name, logic [63:0] value);
-      for (int i = 0; i < elements.size(); i++) begin
-         if (0 == name.compare(elements[i].name)) begin
-            elements[i].record(value);
-         end
       end
    endfunction
 
@@ -241,24 +236,14 @@ class sv_waveterm;
       string empty_section2;
       string sprint;
       
-      empty_name = sv_waveterm_pkg::get_padded_string("", n_size+1);
-      padded_name = sv_waveterm_pkg::get_padded_string(clk_name, n_size+1);
+      empty_name = sv_waveterm_helpers::get_padded_string("", n_size+1);
+      padded_name = sv_waveterm_helpers::get_padded_string(clk_name, n_size+1);
 
-      //TODO: refactor to common helper methods
-      section = "";
-      empty_section = "";
-      for (int i = 0; i < e_size/2; i++) begin
-         section = {section, "-"};
-         empty_section = {empty_section, " "};
-      end
+      section = sv_waveterm_helpers::repeat_string("-", e_size/2);
+      empty_section = sv_waveterm_helpers::repeat_string(" ", e_size/2);
 
-      section2 = "";
-      empty_section2 = "";
-      for (int i = 0; i < e_size-e_size/2; i++) begin
-         section2 = {section2, "-"};
-         empty_section2 = {empty_section2, " "};
-      end
-
+      section2 = sv_waveterm_helpers::repeat_string("-", e_size-e_size/2);
+      empty_section2 = sv_waveterm_helpers::repeat_string(" ", e_size-e_size/2);
 
       sprint = empty_name;
       for (int i = 0; i < size; i++) begin
@@ -286,11 +271,12 @@ endclass
 //TODO: create a $bits sized element with a generic name here.
 `define sv_waveterm_int(id) \
   begin \
-    _waves.add(`"id`", $bits(id)); \
+    sv_waveterm_element _e; \
+    _e = _waves.add(`"id`", $bits(id)); \
     fork begin \
       forever begin \
         @(posedge ___waveterm_clk) \
-        _waves.record(`"id`", 64'(id)); \
+        _e.record(64'(id)); \
       end \
     end join_none \
   end
