@@ -176,7 +176,7 @@ module sv_waveterm_unit_test;
       `FAIL_UNLESS_STR_EQUAL(counter_waves.sprint(), exp)
     `SVTEST_END
 
-    `SVTEST(display_9)
+    `SVTEST(display_10)
       string exp;
       exp = {
 "        +-+ +-+ +-+ +-+ +-+ +-+ +-+ +-+ +", "\n",
@@ -184,10 +184,10 @@ module sv_waveterm_unit_test;
 "         --------------------------------", "\n",
 "reset_b                                  ", "\n",
 "        +---+---+---+---+---+---+---+---+", "\n",
-"counter |2  |3  |4  |5  |6  |7  |8  |9  |", "\n",
+"counter |3  |4  |5  |6  |7  |8  |9  |a  |", "\n",
 "        +---+---+---+---+---+---+---+---+", "\n"
 };
-      repeat (10) @(posedge clk);
+      repeat (11) @(posedge clk);
       $display(counter_waves.sprint());
       `FAIL_UNLESS_STR_EQUAL(counter_waves.sprint(), exp)
     `SVTEST_END
