@@ -1,0 +1,24 @@
+name: SVUnit Examples
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: justinjones/verilator:latest
+      options: --user root
+    steps:
+      - uses: actions/checkout@v2
+      - name: Clone SVUnit
+        uses: actions/checkout@v2
+        with:
+          repository: PeterMonsson/svunit
+          ref: minimal-verilator
+          path: svunit
+      - name: runSVUnit
+        run: (cd examples/svunit; SVUNIT_INSTALL=`pwd`/../../svunit PATH=$PATH:$SVUNIT_INSTALL"/bin" runSVUnit --out obj -f files.f)
