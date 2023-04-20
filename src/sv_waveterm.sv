@@ -186,7 +186,7 @@ class sv_waveterm;
    function int get_largest_name();
       int size = clk_name.len();
       for (int i = 0; i < elements.size(); i++) begin
-         if (elements[i].bits > size) begin
+         if (elements[i].name.len() > size) begin
             size = elements[i].name.len();
          end
       end
@@ -220,7 +220,7 @@ class sv_waveterm;
       int c_size = get_largest_counter();
       e_size = e_size > 3 ? e_size : 3;
       c_size = c_size > 8 ? 8 : c_size; //TODO: Stop hardcoding to 8
-     sprint = sprint_clk(n_size, e_size, c_size); //TODO: move counter to parent, so that we only have one. This will break future optimizations, but improve memory consumption now.
+     sprint = sprint_clk(n_size, e_size-1, c_size); //TODO: move counter to parent, so that we only have one. This will break future optimizations, but improve memory consumption now.
       for (int i = 0; i < elements.size(); i++) begin
          sprint = {sprint, elements[i].sprint(n_size, e_size)};
       end
@@ -247,12 +247,12 @@ class sv_waveterm;
 
       sprint = empty_name;
       for (int i = 0; i < size; i++) begin
-	 sprint = {sprint, "+", section, "+", empty_section};
+	 sprint = {sprint, "+", section, "+", empty_section2};
       end
       sprint = {sprint, "+\n"}; 
       sprint = {sprint, padded_name}; 
       for (int i = 0; i < size; i++) begin
-	 sprint = {sprint, "+", empty_section, "+", section};
+	 sprint = {sprint, "+", empty_section, "+", section2};
       end
       sprint = {sprint, "+\n"}; 
       return sprint;
