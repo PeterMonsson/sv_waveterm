@@ -32,7 +32,14 @@ This could for example be an assertion:
       counter != 5
     ) else $error("Counter is 5\n%s", counter_waves.sprint());
 
-See a full example under [examples/basic](./examples/basic/tb.sv)
+See a full example for assertions at [examples/basic](./examples/basic/tb.sv)
+
+This could also be additional information in SVUnit error messages:
+
+    `FAIL_IF_LOG(counter == 5, {"Unexpected 5 in counter:\n", counter_waves.sprint()})
+
+See a full example for SVUnit at [examples/svunit](./examples/svunit/counter_unit_test.sv)
+
 
 # Save time with sv_waveterm
 
