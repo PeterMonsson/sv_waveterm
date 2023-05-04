@@ -32,26 +32,26 @@ endclass
 
 
 class sv_waveterm_element;
-   string name;
-   int    bits;
-   int    size;
+   string m_name;
+   int    m_bits;
+   int    m_size;
    
    logic [63:0] values[];
    int          counter;
    
    function new(string name, int bits);
-      this.name = name;
-      this.bits = bits;
+      m_name = name;
+      m_bits = bits;
       counter = 0;
    endfunction
 
    function void record(logic [63:0] value);
-      values[counter%size] = value;
+      values[counter%m_size] = value;
       counter++;
    endfunction
 
    function void build(int size);
-      this.size = size;
+      m_size = size;
       values = new[size];
    endfunction
    
@@ -61,15 +61,15 @@ class sv_waveterm_element;
       string    empty_section;
       string    empty_name;
       string    padded_name;
-      min_count = counter >= size ? counter - size : 0;
+      min_count = counter >= m_size ? counter - m_size : 0;
 
       section = sv_waveterm_helpers::repeat_string("-", e_size);
       empty_section = sv_waveterm_helpers::repeat_string(" ", e_size);
 
       empty_name = sv_waveterm_helpers::get_padded_string("", n_size+1);
-      padded_name = sv_waveterm_helpers::get_padded_string(name, n_size+1);
+      padded_name = sv_waveterm_helpers::get_padded_string(m_name, n_size+1);
       
-      if (bits == 1) begin
+      if (m_bits == 1) begin
          sprint = sprint_line(min_count, empty_name, 1'b1, section, empty_section);
          sprint = {sprint, "\n"};
          sprint = {sprint, sprint_line(min_count, padded_name, 1'b0, section, empty_section)};
@@ -89,8 +89,8 @@ class sv_waveterm_element;
       sprint = {name, " "}; //TODO: or - or +? I don't know
       for (int i = min_counter; i < counter; i++) begin
          if (i != min_counter) begin
-            if (values[(i-1)%size] === values[i%size]) begin
-               if (values[i%size][0] === val) begin
+            if (values[(i-1)%m_size] === values[i%m_size]) begin
+               if (values[i%m_size][0] === val) begin
                   sprint = {sprint, "-"};
                end else begin
                   sprint = {sprint, " "};
@@ -99,13 +99,13 @@ class sv_waveterm_element;
                sprint = {sprint, "+"};
             end
          end
-         if (values[i%size][0] === val) begin
+         if (values[i%m_size][0] === val) begin
             sprint = {sprint, section};
          end else begin
             sprint = {sprint, empty_section};
          end
       end
-      if (values[(counter-1)%size][0] === val) begin
+      if (values[(counter-1)%m_size][0] === val) begin
          sprint = {sprint, "-"};
       end else begin
          sprint = {sprint, " "};
@@ -118,7 +118,7 @@ class sv_waveterm_element;
       sprint = {name, "+"};
       for (int i = min_counter; i < counter; i++) begin
          if (i != min_counter) begin
-            if (values[(i-1)%size] === values[i%size]) begin
+            if (values[(i-1)%m_size] === values[i%m_size]) begin
                sprint = {sprint, "-"};
             end else begin
                sprint = {sprint, "+"};
@@ -133,7 +133,7 @@ class sv_waveterm_element;
 
    function string get_padded_value(int index, int e_size);
       string str;
-      str = $sformatf("%0h", values[index%size]);
+      str = $sformatf("%0h", values[index%m_size]);
       for (int i = str.len(); i < e_size; i++) begin
          str = {str, " "};
       end
@@ -145,7 +145,7 @@ class sv_waveterm_element;
       sprint = {name, "|"};
       for (int i = min_counter; i < counter; i++) begin
          if (i != min_counter) begin
-            if (values[(i-1)%size] === values[i%size]) begin
+            if (values[(i-1)%m_size] === values[i%m_size]) begin
                sprint = {sprint, " "};
                sprint = {sprint, section};
             end else begin
@@ -163,10 +163,10 @@ endclass
 
 class sv_waveterm;
    sv_waveterm_element elements[$];
-   string clk_name;
+   string m_clk_name;
    
    function new(string clk_name);
-      this.clk_name = clk_name;
+      m_clk_name = clk_name;
       elements = '{};
    endfunction
 
@@ -184,10 +184,10 @@ class sv_waveterm;
    endfunction
 
    function int get_largest_name();
-      int size = clk_name.len();
+      int size = m_clk_name.len();
       for (int i = 0; i < elements.size(); i++) begin
-         if (elements[i].name.len() > size) begin
-            size = elements[i].name.len();
+         if (elements[i].m_name.len() > size) begin
+            size = elements[i].m_name.len();
          end
       end
       return size;
@@ -196,8 +196,8 @@ class sv_waveterm;
    function int get_largest_display_size();
       int size = 0;
       for (int i = 0; i < elements.size(); i++) begin
-         if (elements[i].bits > size) begin
-            size = elements[i].bits;
+         if (elements[i].m_bits > size) begin
+            size = elements[i].m_bits;
          end
       end
       return (size-1)/4+1;
@@ -237,7 +237,7 @@ class sv_waveterm;
       string sprint;
       
       empty_name = sv_waveterm_helpers::get_padded_string("", n_size+1);
-      padded_name = sv_waveterm_helpers::get_padded_string(clk_name, n_size+1);
+      padded_name = sv_waveterm_helpers::get_padded_string(m_clk_name, n_size+1);
 
       section = sv_waveterm_helpers::repeat_string("-", e_size/2);
       empty_section = sv_waveterm_helpers::repeat_string(" ", e_size/2);
