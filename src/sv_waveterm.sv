@@ -14,7 +14,9 @@
 `ifndef __SV_WAVETERM__
 `define __SV_WAVETERM__
 
+// verilator lint_off DECLFILENAME
 class sv_waveterm_helpers;
+// verilator lint_on DECLFILENAME
    static function string get_padded_string(string s, int size);
       get_padded_string = s;
       for (int i = s.len(); i < size; i++) begin
@@ -32,26 +34,26 @@ endclass
 
 
 class sv_waveterm_element;
-   string name;
-   int    bits;
-   int    size;
+   string m_name;
+   int    m_bits;
+   int    m_size;
    
    logic [63:0] values[];
    int          counter;
    
    function new(string name, int bits);
-      this.name = name;
-      this.bits = bits;
+      m_name = name;
+      m_bits = bits;
       counter = 0;
    endfunction
 
    function void record(logic [63:0] value);
-      values[counter%size] = value;
+      values[counter%m_size] = value;
       counter++;
    endfunction
 
    function void build(int size);
-      this.size = size;
+      m_size = size;
       values = new[size];
    endfunction
    
@@ -61,15 +63,15 @@ class sv_waveterm_element;
       string    empty_section;
       string    empty_name;
       string    padded_name;
-      min_count = counter >= size ? counter - size : 0;
+      min_count = counter >= m_size ? counter - m_size : 0;
 
       section = sv_waveterm_helpers::repeat_string("-", e_size);
       empty_section = sv_waveterm_helpers::repeat_string(" ", e_size);
 
       empty_name = sv_waveterm_helpers::get_padded_string("", n_size+1);
-      padded_name = sv_waveterm_helpers::get_padded_string(name, n_size+1);
+      padded_name = sv_waveterm_helpers::get_padded_string(m_name, n_size+1);
       
-      if (bits == 1) begin
+      if (m_bits == 1) begin
          sprint = sprint_line(min_count, empty_name, 1'b1, section, empty_section);
          sprint = {sprint, "\n"};
          sprint = {sprint, sprint_line(min_count, padded_name, 1'b0, section, empty_section)};
@@ -85,55 +87,55 @@ class sv_waveterm_element;
    endfunction
 
    function string sprint_line(int min_counter, string name, bit val, string section, string empty_section);
-      string sprint;
-      sprint = {name, " "}; //TODO: or - or +? I don't know
+      string result;
+      result = {name, " "}; //TODO: or - or +? I don't know
       for (int i = min_counter; i < counter; i++) begin
          if (i != min_counter) begin
-            if (values[(i-1)%size] === values[i%size]) begin
-               if (values[i%size][0] === val) begin
-                  sprint = {sprint, "-"};
+            if (values[(i-1)%m_size] === values[i%m_size]) begin
+               if (values[i%m_size][0] === val) begin
+                  result = {result, "-"};
                end else begin
-                  sprint = {sprint, " "};
+                  result = {result, " "};
                end
             end else begin
-               sprint = {sprint, "+"};
+               result = {result, "+"};
             end
          end
-         if (values[i%size][0] === val) begin
-            sprint = {sprint, section};
+         if (values[i%m_size][0] === val) begin
+            result = {result, section};
          end else begin
-            sprint = {sprint, empty_section};
+            result = {result, empty_section};
          end
       end
-      if (values[(counter-1)%size][0] === val) begin
-         sprint = {sprint, "-"};
+      if (values[(counter-1)%m_size][0] === val) begin
+         result = {result, "-"};
       end else begin
-         sprint = {sprint, " "};
+         result = {result, " "};
                end
-      return sprint;
+      return result;
    endfunction
 
    function string sprint_line2(int min_counter, string name, string section);
-      string sprint;
-      sprint = {name, "+"};
+      string result;
+      result = {name, "+"};
       for (int i = min_counter; i < counter; i++) begin
          if (i != min_counter) begin
-            if (values[(i-1)%size] === values[i%size]) begin
-               sprint = {sprint, "-"};
+            if (values[(i-1)%m_size] === values[i%m_size]) begin
+               result = {result, "-"};
             end else begin
-               sprint = {sprint, "+"};
+               result = {result, "+"};
             end
          end
          
-         sprint = {sprint, section};
+         result = {result, section};
       end
-      sprint = {sprint, "+"};
-      return sprint;
+      result = {result, "+"};
+      return result;
    endfunction
 
    function string get_padded_value(int index, int e_size);
       string str;
-      str = $sformatf("%0h", values[index%size]);
+      str = $sformatf("%0h", values[index%m_size]);
       for (int i = str.len(); i < e_size; i++) begin
          str = {str, " "};
       end
@@ -141,32 +143,32 @@ class sv_waveterm_element;
    endfunction
    
    function string sprint_line3(int min_counter, string name, string section, int e_size);
-      string sprint;
-      sprint = {name, "|"};
+      string result;
+      result = {name, "|"};
       for (int i = min_counter; i < counter; i++) begin
          if (i != min_counter) begin
-            if (values[(i-1)%size] === values[i%size]) begin
-               sprint = {sprint, " "};
-               sprint = {sprint, section};
+            if (values[(i-1)%m_size] === values[i%m_size]) begin
+               result = {result, " "};
+               result = {result, section};
             end else begin
-               sprint = {sprint, "|"};
-               sprint = {sprint, get_padded_value(i, e_size)};
+               result = {result, "|"};
+               result = {result, get_padded_value(i, e_size)};
             end
          end else begin
-            sprint = {sprint, get_padded_value(i, e_size)};
+            result = {result, get_padded_value(i, e_size)};
          end
       end
-      sprint = {sprint, "|"};
-      return sprint;
+      result = {result, "|"};
+      return result;
    endfunction
 endclass
 
 class sv_waveterm;
    sv_waveterm_element elements[$];
-   string clk_name;
+   string m_clk_name;
    
    function new(string clk_name);
-      this.clk_name = clk_name;
+      m_clk_name = clk_name;
       elements = '{};
    endfunction
 
@@ -184,10 +186,10 @@ class sv_waveterm;
    endfunction
 
    function int get_largest_name();
-      int size = clk_name.len();
+      int size = m_clk_name.len();
       for (int i = 0; i < elements.size(); i++) begin
-         if (elements[i].name.len() > size) begin
-            size = elements[i].name.len();
+         if (elements[i].m_name.len() > size) begin
+            size = elements[i].m_name.len();
          end
       end
       return size;
@@ -196,8 +198,8 @@ class sv_waveterm;
    function int get_largest_display_size();
       int size = 0;
       for (int i = 0; i < elements.size(); i++) begin
-         if (elements[i].bits > size) begin
-            size = elements[i].bits;
+         if (elements[i].m_bits > size) begin
+            size = elements[i].m_bits;
          end
       end
       return (size-1)/4+1;
@@ -234,10 +236,10 @@ class sv_waveterm;
       string empty_section;
       string section2;
       string empty_section2;
-      string sprint;
+      string result;
       
       empty_name = sv_waveterm_helpers::get_padded_string("", n_size+1);
-      padded_name = sv_waveterm_helpers::get_padded_string(clk_name, n_size+1);
+      padded_name = sv_waveterm_helpers::get_padded_string(m_clk_name, n_size+1);
 
       section = sv_waveterm_helpers::repeat_string("-", e_size/2);
       empty_section = sv_waveterm_helpers::repeat_string(" ", e_size/2);
@@ -245,17 +247,17 @@ class sv_waveterm;
       section2 = sv_waveterm_helpers::repeat_string("-", e_size-e_size/2);
       empty_section2 = sv_waveterm_helpers::repeat_string(" ", e_size-e_size/2);
 
-      sprint = empty_name;
+      result = empty_name;
       for (int i = 0; i < size; i++) begin
-	 sprint = {sprint, "+", section, "+", empty_section2};
+	 result = {result, "+", section, "+", empty_section2};
       end
-      sprint = {sprint, "+\n"}; 
-      sprint = {sprint, padded_name}; 
+      result = {result, "+\n"}; 
+      result = {result, padded_name}; 
       for (int i = 0; i < size; i++) begin
-	 sprint = {sprint, "+", empty_section, "+", section2};
+	 result = {result, "+", empty_section, "+", section2};
       end
-      sprint = {sprint, "+\n"}; 
-      return sprint;
+      result = {result, "+\n"}; 
+      return result;
    endfunction
 endclass
 
