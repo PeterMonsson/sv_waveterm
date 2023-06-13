@@ -190,6 +190,7 @@ module sv_waveterm_unit_test;
       repeat (6) @(posedge clk);
       $display(small_counter_waves.sprint());
       `FAIL_UNLESS_STR_EQUAL(small_counter_waves.sprint(), exp)
+   $display("hey world3");
     `SVTEST_END
       
   `SVUNIT_TESTS_END

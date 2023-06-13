@@ -14,7 +14,9 @@
 `ifndef __SV_WAVETERM__
 `define __SV_WAVETERM__
 
+// verilator lint_off DECLFILENAME
 class sv_waveterm_helpers;
+// verilator lint_on DECLFILENAME
    static function string get_padded_string(string s, int size);
       get_padded_string = s;
       for (int i = s.len(); i < size; i++) begin
@@ -85,50 +87,50 @@ class sv_waveterm_element;
    endfunction
 
    function string sprint_line(int min_counter, string name, bit val, string section, string empty_section);
-      string sprint;
-      sprint = {name, " "}; //TODO: or - or +? I don't know
+      string result;
+      result = {name, " "}; //TODO: or - or +? I don't know
       for (int i = min_counter; i < counter; i++) begin
          if (i != min_counter) begin
             if (values[(i-1)%m_size] === values[i%m_size]) begin
                if (values[i%m_size][0] === val) begin
-                  sprint = {sprint, "-"};
+                  result = {result, "-"};
                end else begin
-                  sprint = {sprint, " "};
+                  result = {result, " "};
                end
             end else begin
-               sprint = {sprint, "+"};
+               result = {result, "+"};
             end
          end
          if (values[i%m_size][0] === val) begin
-            sprint = {sprint, section};
+            result = {result, section};
          end else begin
-            sprint = {sprint, empty_section};
+            result = {result, empty_section};
          end
       end
       if (values[(counter-1)%m_size][0] === val) begin
-         sprint = {sprint, "-"};
+         result = {result, "-"};
       end else begin
-         sprint = {sprint, " "};
+         result = {result, " "};
                end
-      return sprint;
+      return result;
    endfunction
 
    function string sprint_line2(int min_counter, string name, string section);
-      string sprint;
-      sprint = {name, "+"};
+      string result;
+      result = {name, "+"};
       for (int i = min_counter; i < counter; i++) begin
          if (i != min_counter) begin
             if (values[(i-1)%m_size] === values[i%m_size]) begin
-               sprint = {sprint, "-"};
+               result = {result, "-"};
             end else begin
-               sprint = {sprint, "+"};
+               result = {result, "+"};
             end
          end
          
-         sprint = {sprint, section};
+         result = {result, section};
       end
-      sprint = {sprint, "+"};
-      return sprint;
+      result = {result, "+"};
+      return result;
    endfunction
 
    function string get_padded_value(int index, int e_size);
@@ -141,23 +143,23 @@ class sv_waveterm_element;
    endfunction
    
    function string sprint_line3(int min_counter, string name, string section, int e_size);
-      string sprint;
-      sprint = {name, "|"};
+      string result;
+      result = {name, "|"};
       for (int i = min_counter; i < counter; i++) begin
          if (i != min_counter) begin
             if (values[(i-1)%m_size] === values[i%m_size]) begin
-               sprint = {sprint, " "};
-               sprint = {sprint, section};
+               result = {result, " "};
+               result = {result, section};
             end else begin
-               sprint = {sprint, "|"};
-               sprint = {sprint, get_padded_value(i, e_size)};
+               result = {result, "|"};
+               result = {result, get_padded_value(i, e_size)};
             end
          end else begin
-            sprint = {sprint, get_padded_value(i, e_size)};
+            result = {result, get_padded_value(i, e_size)};
          end
       end
-      sprint = {sprint, "|"};
-      return sprint;
+      result = {result, "|"};
+      return result;
    endfunction
 endclass
 
@@ -234,7 +236,7 @@ class sv_waveterm;
       string empty_section;
       string section2;
       string empty_section2;
-      string sprint;
+      string result;
       
       empty_name = sv_waveterm_helpers::get_padded_string("", n_size+1);
       padded_name = sv_waveterm_helpers::get_padded_string(m_clk_name, n_size+1);
@@ -245,17 +247,17 @@ class sv_waveterm;
       section2 = sv_waveterm_helpers::repeat_string("-", e_size-e_size/2);
       empty_section2 = sv_waveterm_helpers::repeat_string(" ", e_size-e_size/2);
 
-      sprint = empty_name;
+      result = empty_name;
       for (int i = 0; i < size; i++) begin
-	 sprint = {sprint, "+", section, "+", empty_section2};
+	 result = {result, "+", section, "+", empty_section2};
       end
-      sprint = {sprint, "+\n"}; 
-      sprint = {sprint, padded_name}; 
+      result = {result, "+\n"}; 
+      result = {result, padded_name}; 
       for (int i = 0; i < size; i++) begin
-	 sprint = {sprint, "+", empty_section, "+", section2};
+	 result = {result, "+", empty_section, "+", section2};
       end
-      sprint = {sprint, "+\n"}; 
-      return sprint;
+      result = {result, "+\n"}; 
+      return result;
    endfunction
 endclass
 
