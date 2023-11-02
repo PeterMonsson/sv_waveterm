@@ -10,15 +10,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: justinjones/verilator:latest
+      image: justinjones/verilator:v5.012
       options: --user root
     steps:
       - uses: actions/checkout@v2
       - name: Clone SVUnit
         uses: actions/checkout@v2
         with:
-          repository: PeterMonsson/svunit
-          ref: minimal-verilator
+          repository: svunit/svunit
+          ref: master
           path: svunit
       - name: runSVUnit
         run: (cd examples/svunit; SVUNIT_INSTALL=`pwd`/../../svunit PATH=$PATH:$SVUNIT_INSTALL"/bin" runSVUnit --out obj -f files.f)
