@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: verilator/verilator:latest
+      image: justinjones/verilator:v5.012
       options: --user root
     steps:
       - uses: actions/checkout@v2
