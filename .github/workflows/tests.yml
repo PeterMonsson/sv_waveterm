@@ -17,8 +17,8 @@ jobs:
       - name: Clone SVUnit
         uses: actions/checkout@v2
         with:
-          repository: PeterMonsson/svunit
-          ref: minimal-verilator
+          repository: svunit/svunit
+          ref: master
           path: svunit
       - name: runSVUnit
         run: (cd tests; SVUNIT_INSTALL=`pwd`/../svunit PATH=$PATH:$SVUNIT_INSTALL"/bin" runSVUnit -c_arg "-I../src" -c_arg "--assert" -c_arg "-j 0")
